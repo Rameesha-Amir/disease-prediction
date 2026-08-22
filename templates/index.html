@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindCheck — Student Mental Health Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#fff9f2;
+    --peach-soft:#ffe8d6;
+    --peach:#ffb98a;
+    --coral:#ff8c69;
+    --coral-deep:#e2633f;
+    --plum-ink:#4a3226;
+    --muted:#a3877a;
+    --line:#f5ddc9;
+    --mint:#bfe8d4;
+    --mint-deep:#4fae82;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--plum-ink);
+    font-family:'Nunito', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .backdrop{
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(circle at 88% -6%, var(--peach-soft) 0%, transparent 42%),
+      radial-gradient(circle at -8% 105%, #fdeee0 0%, transparent 50%);
+    z-index:-1;
+  }
+
+  .wrap{
+    max-width:1040px;
+    margin:0 auto;
+    padding:52px 26px 80px;
+  }
+
+  header{
+    text-align:center;
+    margin-bottom:44px;
+  }
+
+  .brand{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background:var(--white, #fff);
+    border:1px solid var(--line);
+    padding:8px 18px;
+    border-radius:999px;
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    color:var(--coral-deep);
+    margin-bottom:20px;
+  }
+
+  h1{
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size:clamp(30px, 4.5vw, 46px);
+    margin:0 0 12px;
+    color:var(--plum-ink);
+    line-height:1.1;
+  }
+
+  header p.tagline{
+    max-width:480px;
+    margin:0 auto;
+    font-size:15px;
+    color:var(--muted);
+    line-height:1.6;
+  }
+
+  .disclaimer{
+    max-width:640px;
+    margin:24px auto 0;
+    background:#fff4e9;
+    border:1px solid var(--peach);
+    border-radius:14px;
+    padding:14px 18px;
+    font-size:12.5px;
+    color:#8a5a35;
+    line-height:1.6;
+    text-align:left;
+  }
+
+  .disclaimer strong{ color:var(--coral-deep); }
+
+  .layout{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:28px;
+    margin-top:40px;
+  }
+
+  @media (max-width:840px){
+    .layout{ grid-template-columns:1fr; }
+  }
+
+  .card{
+    background:#ffffff;
+    border:1px solid var(--line);
+    border-radius:24px;
+    padding:30px;
+  }
+
+  .card h2{
+    font-family:'Quicksand', sans-serif;
+    font-size:19px;
+    font-weight:700;
+    margin:0 0 4px;
+    color:var(--coral-deep);
+  }
+
+  .card .sub{
+    font-size:13px;
+    color:var(--muted);
+    margin:0 0 22px;
+  }
+
+  .grid-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+
+  .field{ margin-bottom:16px; }
+
+  .field label{
+    display:block;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--plum-ink);
+    margin-bottom:6px;
+  }
+
+  .field select, .field input[type="number"]{
+    width:100%;
+    padding:11px 13px;
+    border-radius:12px;
+    border:1.5px solid var(--line);
+    background:var(--cream);
+    font-family:'Nunito', sans-serif;
+    font-size:14px;
+    color:var(--plum-ink);
+    transition:border-color .15s ease, background .15s ease;
+  }
+
+  .field select:focus, .field input:focus{
+    outline:none;
+    border-color:var(--coral);
+    background:#fff;
+  }
+
+  .toggle-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 4px;
+    border-bottom:1px dashed var(--line);
+  }
+
+  .toggle-row:last-of-type{ border-bottom:none; }
+
+  .toggle-row span{
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--plum-ink);
+  }
+
+  .switch{
+    position:relative;
+    width:46px;
+    height:26px;
+    flex-shrink:0;
+  }
+
+  .switch input{ opacity:0; width:0; height:0; }
+
+  .slider{
+    position:absolute;
+    cursor:pointer;
+    inset:0;
+    background:var(--line);
+    border-radius:999px;
+    transition:.2s;
+  }
+
+  .slider::before{
+    content:"";
+    position:absolute;
+    height:20px;
+    width:20px;
+    left:3px;
+    bottom:3px;
+    background:white;
+    border-radius:50%;
+    transition:.2s;
+    box-shadow:0 1px 3px rgba(0,0,0,.2);
+  }
+
+  input:checked + .slider{ background:var(--coral); }
+  input:checked + .slider::before{ transform:translateX(20px); }
+
+  button.submit{
+    width:100%;
+    margin-top:22px;
+    padding:15px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg, var(--coral), var(--peach));
+    color:#fff;
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+
+  button.submit:hover{
+    transform:translateY(-1px);
+    box-shadow:0 12px 26px -10px rgba(226,99,63,.55);
+  }
+
+  button.submit:disabled{ opacity:.6; cursor:progress; }
+
+  .result-card{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
+
+  .ring-wrap{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    margin:8px 0 4px;
+  }
+
+  .ring-number{
+    font-family:'Quicksand', sans-serif;
+    font-size:32px;
+    font-weight:700;
+    fill:var(--plum-ink);
+  }
+
+  .ring-sub{
+    font-size:10.5px;
+    fill:var(--muted);
+    font-family:'Nunito', sans-serif;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+
+  .status-pill{
+    margin-top:8px;
+    padding:9px 20px;
+    border-radius:999px;
+    font-size:13.5px;
+    font-weight:700;
+    font-family:'Quicksand', sans-serif;
+    background:var(--mint);
+    color:var(--mint-deep);
+  }
+
+  .status-pill.higher{
+    background:#ffe0d6;
+    color:var(--coral-deep);
+  }
+
+  .placeholder{
+    color:var(--muted);
+    font-size:13.5px;
+    line-height:1.6;
+    padding:36px 8px 6px;
+  }
+
+  .placeholder strong{ color:var(--coral-deep); }
+
+  .divider{
+    width:100%;
+    height:1px;
+    background:var(--line);
+    margin:24px 0 18px;
+  }
+
+  .note-box{
+    width:100%;
+    text-align:left;
+    background:var(--cream);
+    border-radius:14px;
+    padding:14px 16px;
+    font-size:12px;
+    color:var(--muted);
+    line-height:1.6;
+  }
+
+  .error-box{
+    width:100%;
+    background:#fdf2f2;
+    border:1px solid #f3d6d6;
+    color:#a04444;
+    padding:12px 14px;
+    border-radius:12px;
+    font-size:12.5px;
+    text-align:left;
+    margin-top:14px;
+    display:none;
+  }
+
+  footer{
+    text-align:center;
+    margin-top:52px;
+    font-size:12px;
+    color:var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<div class="wrap">
+
+  <header>
+    <div class="brand">🌿 MindCheck</div>
+    <h1>A gentle check-in on<br>your mental wellbeing</h1>
+    <p class="tagline">Answer a few quick questions about your academic life, and MindCheck's model will estimate a wellbeing risk indicator.</p>
+  </header>
+
+  <div class="layout">
+
+    <div class="card">
+      <h2>Tell us about yourself</h2>
+      <p class="sub">All fields feed directly into the trained model.</p>
+
+      <form id="predict-form">
+        <div class="grid-2">
+          <div class="field">
+            <label for="gender">Gender</label>
+            <select id="gender">
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="age">Age</label>
+            <input type="number" id="age" value="21" min="16" max="35">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="course">Course</label>
+          <select id="course">
+            <option value="Engineering">Engineering</option>
+            <option value="BCS">BCS</option>
+            <option value="BIT">BIT</option>
+            <option value="Business Administration">Business Administration</option>
+            <option value="Psychology">Psychology</option>
+            <option value="Law">Law</option>
+            <option value="Nursing">Nursing</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="year_of_study">Year of study</label>
+            <select id="year_of_study">
+              <option value="year 1">Year 1</option>
+              <option value="year 2">Year 2</option>
+              <option value="year 3">Year 3</option>
+              <option value="year 4">Year 4</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="cgpa">CGPA range</label>
+            <select id="cgpa">
+              <option value="0 - 1.99">0 - 1.99</option>
+              <option value="2.00 - 2.49">2.00 - 2.49</option>
+              <option value="2.50 - 2.99">2.50 - 2.99</option>
+              <option value="3.00 - 3.49">3.00 - 3.49</option>
+              <option value="3.50 - 4.00" selected>3.50 - 4.00</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <span>Married</span>
+          <label class="switch">
+            <input type="checkbox" id="marital_status">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span>Experiencing anxiety</span>
+          <label class="switch">
+            <input type="checkbox" id="anxiety">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span>Had a panic attack recently</span>
+          <label class="switch">
+            <input type="checkbox" id="panic_attack">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span>Sought specialist treatment before</span>
+          <label class="switch">
+            <input type="checkbox" id="sought_treatment">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <button type="submit" class="submit" id="submit-btn">Check in with MindCheck</button>
+      </form>
+
+      <div id="error-box" class="error-box"></div>
+    </div>
+
+    <div class="card result-card">
+      <h2>Your wellbeing snapshot</h2>
+      <p class="sub">Live estimate from mental_health_model.pkl</p>
+
+      <div class="ring-wrap">
+        <svg viewBox="0 0 160 160" width="180">
+          <circle cx="80" cy="80" r="66" fill="none" stroke="#ffe8d6" stroke-width="14"/>
+          <circle id="ring-arc" cx="80" cy="80" r="66" fill="none" stroke="#ff8c69" stroke-width="14"
+                  stroke-linecap="round" stroke-dasharray="415" stroke-dashoffset="415"
+                  transform="rotate(-90 80 80)"
+                  style="transition: stroke-dashoffset 1s cubic-bezier(.4,0,.2,1), stroke .4s ease;"/>
+          <text x="80" y="86" text-anchor="middle" class="ring-number" id="ring-number">--</text>
+        </svg>
+      </div>
+      <div class="ring-sub" style="margin-top:-6px; font-size:11px;">estimated risk indicator</div>
+
+      <div id="result-placeholder" class="placeholder">
+        Fill in the form and press <strong>Check in with MindCheck</strong> to see your wellbeing snapshot.
+      </div>
+
+      <div id="result-content" style="display:none; width:100%;">
+        <div class="status-pill" id="status-pill">Lower Risk</div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>MindCheck &mdash; not a diagnostic tool, for reflection only</footer>
+
+</div>
+
+<script>
+  const form = document.getElementById("predict-form");
+  const submitBtn = document.getElementById("submit-btn");
+  const errorBox = document.getElementById("error-box");
+
+  const placeholder = document.getElementById("result-placeholder");
+  const resultContent = document.getElementById("result-content");
+  const statusPill = document.getElementById("status-pill");
+  const ringArc = document.getElementById("ring-arc");
+  const ringNumber = document.getElementById("ring-number");
+
+  const CIRC = 415; // 2 * PI * 66, matches the circle radius above
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Checking in...";
+    errorBox.style.display = "none";
+
+    const payload = {
+      gender: document.getElementById("gender").value,
+      age: document.getElementById("age").value,
+      course: document.getElementById("course").value,
+      year_of_study: document.getElementById("year_of_study").value,
+      cgpa: document.getElementById("cgpa").value,
+      marital_status: document.getElementById("marital_status").checked ? "Yes" : "No",
+      anxiety: document.getElementById("anxiety").checked ? "Yes" : "No",
+      panic_attack: document.getElementById("panic_attack").checked ? "Yes" : "No",
+      sought_treatment: document.getElementById("sought_treatment").checked ? "Yes" : "No",
+    };
+
+    try {
+      const res = await fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (!data.success) throw new Error(data.error || "Something went wrong");
+
+      const pct = data.probability;
+      const offset = CIRC - (CIRC * pct) / 100;
+      ringArc.style.strokeDashoffset = offset;
+      ringArc.style.stroke = pct >= 50 ? "#e2633f" : "#4fae82";
+      ringNumber.textContent = pct.toFixed(1) + "%";
+
+      statusPill.textContent = data.result;
+      statusPill.className = "status-pill" + (data.prediction === 1 ? " higher" : "");
+
+      placeholder.style.display = "none";
+      resultContent.style.display = "block";
+
+    } catch (err) {
+      errorBox.textContent = "Error: " + err.message;
+      errorBox.style.display = "block";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Check in with MindCheck";
+    }
+  });
+</script>
+
+</body>
+</html>
